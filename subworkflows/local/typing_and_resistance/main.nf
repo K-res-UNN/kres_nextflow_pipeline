@@ -39,11 +39,11 @@ workflow TYPING_AND_RESISTANCE {
     RENAME_MLST(ch_mlst_out, file("${projectDir}/bin/mlst_species_names.sh"))
     ch_mlst_renamed = RENAME_MLST.out.tsv
     ch_mlst_species = RENAME_MLST.out.species
-    ch_mlst_speciel_value = ch_mlst_species
-    .map { meta, file ->
-        def content = file.text.trim()
-        tuple(meta, content)
-    }
+    ch_mlst_species_value = ch_mlst_species
+        .map { meta, file ->
+            def content = file.text.trim()
+            tuple(meta, content)
+        }
 
     // MODULE: RMLST
     RMLST(ch_final_fasta)
@@ -55,7 +55,7 @@ workflow TYPING_AND_RESISTANCE {
     // Only run Kleborate fot Klebsiella assemblies identified through rMLST
     ch_species_fasta = ch_mlst_species.join(ch_final_fasta)
 
-    ch_klebsiella = ch_mlst_speciel_value
+    ch_klebsiella = ch_mlst_species_value
         .filter { meta, species ->
             species == "Klebsiella pneumoniae"
         }
@@ -68,10 +68,11 @@ workflow TYPING_AND_RESISTANCE {
     ch_kleborate_results = KLEBORATE.out.txt
     ch_versions = ch_versions.mix(KLEBORATE.out.versions.first())
 
-    ch_non_klebsiella = ch_mlst_speciel_value
+    ch_non_klebsiella = ch_mlst_species_value
         .filter { meta, species -> species != "Klebsiella pneumoniae" }
     ch_kleborate_placeholder = ch_non_klebsiella.map { meta, species ->
-        tuple(meta, file("${projectDir}/assets/kleborate_placeholder.tsv"))
+        tuple(meta, file("${projectDir}/assets/kleborate_placeholder.tsv")
+            .copyTo("${meta.id}_kleborate.txt"))
     }
     ch_kleborate_all_results = ch_kleborate_results
         .mix(ch_kleborate_placeholder)
@@ -100,7 +101,7 @@ workflow TYPING_AND_RESISTANCE {
 
     // MODULE: LRE_FINDER
     // Only run LRE-Finder for Enterococcus assemblies identified through rMLST
-    ch_enterococcus = ch_mlst_speciel_value
+    ch_enterococcus = ch_mlst_species_value
         .filter { meta, species ->
             species ==~ /Enterococcus.*/
         }
@@ -114,7 +115,7 @@ workflow TYPING_AND_RESISTANCE {
     ch_versions = ch_versions.mix(LRE_FINDER.out.versions)
 
     // Set output channel for non-Enterococci (use placeholder file)
-    ch_non_enterococcus = ch_mlst_speciel_value
+    ch_non_enterococcus = ch_mlst_species_value
         .filter { meta, species -> !(species ==~ /Enterococcus.*/) }
     ch_lrefinder_placeholder = ch_non_enterococcus.map { meta, species ->
         tuple(meta, file("${projectDir}/assets/lre-finder_placeholder.tsv"))
