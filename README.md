@@ -16,11 +16,12 @@
   - [Long-read input](#long-read-input)
   - [Short-read input](#short-read-input)
   - [Run the pipeline](#run-the-pipeline)
+  - [Test run](#test-run)
 
 
 ## Introduction
-This is a Nextflow pipeline written using the nf-core template, and is made for analyzing whole-genome sequencing data from bacterial isolates.
-It`s main function is to asses antimicrobial resistance in the provided isolates and the main steps of the pipeline is:
+A pipeline for analyzing whole-genome sequencing data from bacterial isolates with focus on molecular typing and discovery of antimicrobial resistance.
+The main steps of the pipeline are:
 * Genome assembly:
   - [hybracter](https://github.com/gbouras13/hybracter) (hybrid or nanopore-only assembly)
   - [shovill](https://github.com/tseemann/shovill) (short read assembly)
@@ -38,8 +39,7 @@ It`s main function is to asses antimicrobial resistance in the provided isolates
 
 ## Requirements
 ### Dependencies
-This pipeline is developed with singularity for tool dependencies. Most of the containers used is accessible from public registries like `quay` and `biocontainers`
-but for the tools not available in the registries local builds are currently used.
+This pipeline is developed with containers for tool dependencies (Docker or Singularity/Apptainer). Most of the containers used is accessible from public registries like `quay` and `biocontainers`.
 
 ### Databases
 In order for the pipeline to run these databases must be available on the system:
@@ -60,7 +60,7 @@ git clone https://github.com/aevenstad/assembly_amr.git
 The most straightforward way to fetch the required databases is to install them via the tools own helper scripts.
 
 Run the script `pull_containers.sh` to download containers for `amrfinderplus`, `PlasmidFinder` and `bakta`.
-  
+
 It’s recommended to set the container directory using the Nextflow variable `$NXF_SINGULARITY_CACHEDIR`:
 ```
 NXF_SINGULARITY_CACHEDIR=/path/to/containers/
@@ -104,12 +104,14 @@ singularity exec <bakta_image> bakta_db download --output ./ --type [light|full]
 --plasmidfinder_db      [string] Path to the PlasmidFinder database
 --bakta                 [boolean] Run annotation with bakta [default: false]
 --bakta_db              [string] Path to the bakta database
---mlst_db               [string] Path to mlst database [default: use db in container]
+--mlst_db               [string] Path to mlst database [default: use db in container (not very updated)]
 ```
 
 
 #### Hybrid input
-If you have both Nanopore and Illumina reads from the same isolate and want to run a hybrid assembly, input must be provided in a comma-separated file e.g. `samplesheet.csv`:
+Input must be provided in a comma-separated file e.g. `samplesheet.csv` with sample names and path to `fastq`-files.
+
+If you have both Nanopore and Illumina reads from the same isolate and want to run a hybrid assembly:
 ```
 sample,nanopore,illumina_R1,illumina_R2
 isolate1,/path/to/nanopore/data/isolate1.fastq.gz,/path/to/illumina/data/isolate1_R1.fastq.gz,/path/to/illumina/data/isolate1_R2.fastq.gz
@@ -117,16 +119,15 @@ isolate2,/path/to/nanopore/data/isolate2.fastq.gz,/path/to/illumina/data/isolate
 ```
 
 #### Long-read input
-For long read only assembly with Nanopore reads:
-`samplesheet.csv`:
+For long-read only assembly with Nanopore reads:
 ```
 sample,nanopore
 isolate1,/path/to/nanopore/data/isolate1.fastq.gz
 isolate2,/path/to/nanopore/data/isolate2.fastq.gz
 ```
+
 #### Short-read input
-For short read only assembly with Illumina reads:
-`samplesheet.csv`:
+For short-read only assembly with Illumina reads:
 ```
 sample,illumina_R1,illumina_R2
 isolate1,/path/to/illumina/data/isolate1_R1.fastq.gz,/path/to/illumina/data/isolate1_R2.fastq.gz
@@ -144,6 +145,37 @@ nextflow run /path/to/assembly_amr/main.nf \
 --assembly_type [hybrid|long|short] \
 --amrfinder_db <amrfinder_db> \
 --plasmidfinder_db <plasmidfinder_db>
+```
+
+
+
+### Test run
+The pipeline can be tested with a small dataset to verify that everything works.
+These instructions are based on the [hybracter_benchmarking](https://github.com/gbouras13/hybracter_benchmarking/blob/main/get_fastqs.md) repo.
+
+#### Download fastqs
+```
+mamba create -n fastq-dl fastq-dl
+conda activate fastq-dl
+fastq-dl -a SRR21386014
+fastq-dl -a SRR21386012
+```
+
+
+#### Subsample fastqs
+```
+mamba create -n seqkit -c bioconda seqkit
+conda activate seqkit
+seqkit sample -p 0.05 SRR21386012_1.fastq.gz  -o SRR21386012_1_subset2.fastq.gz
+seqkit sample -p 0.1 -s 10 SRR21386014_1.fastq.gz -o SRR21386014_1_subset.fastq.gz
+seqkit sample -p 0.1 -s 10 SRR21386014_2.fastq.gz -o SRR21386014_2_subset.fastq.gz
+```
+
+
+#### Create samplesheet
+```
+sample,nanopore,illumina_R1,illumina_R2
+SRR213860XX,SRR21386012_1_subset.fastq.gz,SRR21386014_1_subset.fastq.gz,SRR21386014_2_subset.fastq.gz
 ```
 
 
