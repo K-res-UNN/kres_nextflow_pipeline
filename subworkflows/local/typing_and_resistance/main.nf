@@ -126,7 +126,7 @@ workflow TYPING_AND_RESISTANCE {
         }
     VIRULENCEFINDER(ch_virulencefinder_input)
     ch_virulencefinder_results = VIRULENCEFINDER.out.tsv
-    ch_verisons = ch_versions.mix(VIRULENCEFINDER.out.versions)
+    ch_versions = ch_versions.mix(VIRULENCEFINDER.out.versions)
 
     // Set output channel for non-Enterococci (use placeholder file)
     ch_non_enterococcus = ch_mlst_species_value
