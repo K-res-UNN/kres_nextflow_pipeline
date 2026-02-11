@@ -13,6 +13,7 @@ include { PLASMIDFINDER                         } from '../../../modules/nf-core
 include { RMLST                                 } from '../../../modules/local/rmlst/main'
 include { RENAME_MLST                           } from '../../../modules/local/renamemlst/main'
 include { SPLIT_BAKTA                           } from '../../../modules/local/split_bakta/main'
+include { VIRULENCEFINDER                       } from '../../../modules/local/virulencefinder/main'
 
 /*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -117,6 +118,16 @@ workflow TYPING_AND_RESISTANCE {
     ch_lrefinder_results = LRE_FINDER.out.txt
     ch_versions = ch_versions.mix(LRE_FINDER.out.versions)
 
+
+    ch_virulencefinder_input = ch_final_fasta
+        .join(ch_enterococcus)
+        .map { meta , file ,species ->
+        tuple(meta, file)
+        }
+    VIRULENCEFINDER(ch_virulencefinder_input)
+    ch_virulencefinder_results = VIRULENCEFINDER.out.tsv
+    ch_verisons = ch_versions.mix(VIRULENCEFINDER.out.versions)
+
     // Set output channel for non-Enterococci (use placeholder file)
     ch_non_enterococcus = ch_mlst_species_value
         .filter { meta, species -> !(species ==~ /Enterococcus.*/) }
@@ -125,6 +136,12 @@ workflow TYPING_AND_RESISTANCE {
     }
     ch_lrefinder_all_results = ch_lrefinder_results
         .mix(ch_lrefinder_placeholder)
+
+    ch_virulencefinder_placeholder = ch_non_enterococcus.map { meta, species ->
+        tuple(meta, file("${projectDir}/assets/virulencefinder_placeholder.tsv"))
+    }
+    ch_virulencefinder_all_results = ch_virulencefinder_results
+        .mix(ch_virulencefinder_placeholder)
 
     // MODULE: PLASMIDFINDER
     PLASMIDFINDER(ch_final_fasta)
@@ -138,5 +155,6 @@ workflow TYPING_AND_RESISTANCE {
     ch_amrfinder_results
     ch_plasmidfinder_results
     ch_lrefinder_all_results
+    ch_virulencefinder_all_results
     ch_versions
 }
