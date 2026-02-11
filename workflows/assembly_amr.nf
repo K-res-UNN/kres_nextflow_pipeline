@@ -140,6 +140,7 @@ workflow ASSEMBLY_AMR {
             .join(ch_amrfinder_results)
             .join(ch_plasmidfinder_results)
             .join(ch_lrefinder_results_report)
+            .join(ch_virulencefinder_results_report)
             .combine(ch_genome_size)
             .combine(ch_kleborate_columns)
             .combine(ch_test_rmd)
