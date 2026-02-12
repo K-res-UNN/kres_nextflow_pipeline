@@ -138,7 +138,7 @@ db_df <- enframe(unlist(yml)) %>%
   separate(name, into = c("module", "Name"), fill = "right", sep = "\\.") %>%
   rename(Version = value) %>%
   select(-module) %>%
-  filter(Name == "amrfinderplus-database" | Name == "PlasmidFinder database")
+  filter(Name == "amrfinderplus-database" | Name == "PlasmidFinder database" | Name == "VirulenceFinder Database")
 ```
 \vspace{1em}
 \textbf{\textcolor{violet}{RID : `r sample_id`}}
