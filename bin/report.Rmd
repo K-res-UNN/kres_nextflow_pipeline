@@ -296,7 +296,7 @@ if (nrow(AMR_1st_criteria) > 0) {
 
 ```{r, echo=FALSE, results='asis'}
 AMR_2nd_criteria <- AMR_out %>%
-  filter(Method == "POINTX") %>%
+  filter(Method == "POINTX" | Method == "POINT_DISRUPT") %>%
   arrange(Class, Subclass) %>%
   select(Element, Class, Subclass, Coverage, Identity)
 
