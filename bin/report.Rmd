@@ -211,7 +211,7 @@ cat("\\end{tabular}\n")
 \subsubsection*{\color{blue}2. Taksonomisk klassifisering:}
 \vspace{1em}
 
-a) Species og MLST-type (basert på https://pubmlst.org/):
+a) Species og MLST-type:
 ```{r mlst, echo=FALSE, results='asis', warning=FALSE}
 mlst_species <- mlst[,2]
 mlst_st <- mlst[,3]
@@ -219,7 +219,7 @@ mlst_st <- mlst[,3]
 **`r mlst_species` ST-`r mlst_st`**
 \vspace{1em}
 
-b) Ribosomal MLST - Species og støtteprosent (basert på https://pubmlst.org/species-id):
+b) Ribosomal MLST - Species og støtteprosent:
 ```{r rmlst, echo=FALSE, results='asis', warning=FALSE}
 rmlst <- rmlst %>%
   filter(V1 == "Taxon" | V1 == "Support")
@@ -229,7 +229,7 @@ rmlst <- rmlst %>%
 
 ```{r results='asis', echo=FALSE}
 if (!is.null(kleborate) && nrow(kleborate) == 1 ) {
-  cat("c) Kleborate (basert på https://github.com/katholt/Kleborate):")
+  cat("c) Kleborate:")
   cat("\\vspace{0.5em}\n")
   kleborate_species <- kleborate[1, "enterobacterales__species__species"]
   kleborate_species_match <- kleborate[1, "enterobacterales__species__species_match"]
@@ -314,9 +314,9 @@ if (nrow(AMR_2nd_criteria) > 0) {
         position = "left",
         font_size = 9,
         ) %>%
-    column_spec(1, width = "2cm") %>%
-    column_spec(2, width = "4cm") %>%
-    column_spec(3, width = "5cm") %>%
+    column_spec(1, width = "3cm") %>%
+    column_spec(2, width = "3.5cm") %>%
+    column_spec(3, width = "4.5cm") %>%
     column_spec(4, width = "1cm") %>%
     column_spec(5, width = "1cm")
 } else {
@@ -506,7 +506,9 @@ if (!is.null(kleborate) && nrow(kleborate) == 1) {
 ```{r results='asis', echo=FALSE}
 if (!is.null(lrefinder)) {
   cat("\\needspace{20\\baselineskip}\n")
-  cat("\\textbf{e) Linezolid Resistens: påvist med LRE-finder}")
+  cat("\\textbf{e) Enterokokk-spesifikk resistensanalyse:}\n")
+  cat("\\vspace{1em}\n\\par\n")
+  cat("\\textbf{Linezolid resistens:}\n")
   cat("\\vspace{1em}\n")
 
   # Species identified
@@ -590,9 +592,8 @@ if (!is.null(virulencefinder)) {
     cat("\\vspace*{3em}\n")
     cat("\\needspace{10\\baselineskip}\n")
 
-    cat("\\textbf{f) Virulensfaktorer: påvist med VirulenceFinder\\newline}\n")
+    cat("\\textbf{Virulensfaktorer:}\n")
     cat("\\vspace*{1em}\n")
-    cat("\\text{Analysen gjelder bare Enterokokker}\n\n")
 
     virulencefinder <- virulencefinder %>%
         select(virulence_gene, identity, coverage)
@@ -628,7 +629,7 @@ if (!is.null(virulencefinder)) {
 \needspace{10\baselineskip}
 \subsubsection*{\color{blue}4. Plasmidreplikon:}
 \vspace{0.5em}
-(påvist med PlasmidFinder https://cge.cbs.dtu.dk/services/PlasmidFinder/). Analysen gjelder bare Enterobacterales og Gram-positive.
+Analysen gjelder bare Enterobacterales og Gram-positive
 
 ```{r results='asis', echo=FALSE}
 plasmidfinder <- plasmidfinder %>%
