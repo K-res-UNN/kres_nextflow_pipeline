@@ -4,8 +4,8 @@ process RENAME_MLST {
     label 'process_single'
 
     container "${workflow.containerEngine == 'singularity' && !task.ext.singularity_pull_docker_container
-        ? 'https://depot.galaxyproject.org/singularity/mlst:2.23.0--hdfd78af_0'
-        : 'biocontainers/mlst:2.23.0--hdfd78af_0'}"
+        ? 'https://depot.galaxyproject.org/singularity/mlst:2.32.2--hdfd78af_0'
+        : 'biocontainers/mlst:2.32.2--hdfd78af_0'}"
 
     input:
     tuple val(meta), path(mlst_out)
