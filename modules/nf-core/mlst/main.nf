@@ -39,6 +39,7 @@ process MLST {
     cat <<-END_VERSIONS > versions.yml
     "${task.process}":
         mlst: \$( echo \$(mlst --version 2>&1) | sed 's/mlst //' )
+        mlst database: "2026-02-13"
     END_VERSIONS
     """
 }
