@@ -508,7 +508,7 @@ if (!is.null(lrefinder)) {
   cat("\\needspace{20\\baselineskip}\n")
   cat("\\textbf{e) Enterokokk-spesifikk resistensanalyse:}\n")
   cat("\\vspace{1em}\n\\par\n")
-  cat("\\textbf{Linezolid resistens:}\n")
+  cat("\\textbf{Linezolidresistens:}\n")
   cat("\\vspace{1em}\n")
 
   # Species identified
@@ -555,7 +555,7 @@ if (!is.null(lrefinder)) {
   }
 
   # Extract mutations
-  cat("Mutations:\n")
+  cat("Mutasjoner:\n")
   mut_lines <- lrefinder[(mut_start + 1):length(lrefinder)]
   mut_lines <- mut_lines[mut_lines != "" & !grepl("reference", mut_lines)]
   if (length(mut_lines) > 0) {
