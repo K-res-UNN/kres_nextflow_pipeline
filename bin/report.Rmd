@@ -138,7 +138,7 @@ db_df <- enframe(unlist(yml)) %>%
   separate(name, into = c("module", "Name"), fill = "right", sep = "\\.") %>%
   rename(Version = value) %>%
   select(-module) %>%
-  filter(Name == "amrfinderplus-database" | Name == "PlasmidFinder database" | Name == "VirulenceFinder Database")
+  filter(Name == "amrfinderplus-database" | Name == "PlasmidFinder database" | Name == "VirulenceFinder database" | Name == "mlst database")
 ```
 \vspace{1em}
 \textbf{\textcolor{violet}{RID : `r sample_id`}}
@@ -693,6 +693,7 @@ db_tbl <- knitr::kable(
   linesep = "",
   align = "l"
 ) %>%
+  #footnote(general = "versjon for mlst database er satt til dato for nedlasting av mlst-skjema fra pubMLST og pasteurMLST", general_title = "") %>%
   kableExtra::kable_styling(
     latex_options = c("striped", "repeat_header"),
     full_width = FALSE,
@@ -703,6 +704,8 @@ db_tbl <- knitr::kable(
   column_spec(2, width = "4cm")
 cat("\\textbf{Database:}")
 print(db_tbl)
+cat("\n\\textsuperscript{*}")
+cat("\\text{\\footnotesize   versjon for mlst database er satt til dato for nedlasting av mlst-skjema fra pubMLST og pasteurMLST.}")
 ```
 
 
