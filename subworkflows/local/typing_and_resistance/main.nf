@@ -119,8 +119,13 @@ workflow TYPING_AND_RESISTANCE {
     ch_versions = ch_versions.mix(LRE_FINDER.out.versions)
 
 
+    ch_efaecium = ch_mlst_species_value
+        .filter { meta, species ->
+            species == "Enterococcus faecium"
+        }
+
     ch_virulencefinder_input = ch_final_fasta
-        .join(ch_enterococcus)
+        .join(ch_efaecium)
         .map { meta , file ,species ->
         tuple(meta, file)
         }
@@ -131,13 +136,18 @@ workflow TYPING_AND_RESISTANCE {
     // Set output channel for non-Enterococci (use placeholder file)
     ch_non_enterococcus = ch_mlst_species_value
         .filter { meta, species -> !(species ==~ /Enterococcus.*/) }
+
     ch_lrefinder_placeholder = ch_non_enterococcus.map { meta, species ->
         tuple(meta, file("${projectDir}/assets/lre-finder_placeholder.tsv"))
     }
     ch_lrefinder_all_results = ch_lrefinder_results
         .mix(ch_lrefinder_placeholder)
 
-    ch_virulencefinder_placeholder = ch_non_enterococcus.map { meta, species ->
+    // Set output channel for non-efaecium
+    ch_non_efaecium = ch_mlst_species_value
+        .filter { meta, species -> !(species == "Enterococcus faecium") }
+
+    ch_virulencefinder_placeholder = ch_non_efaecium.map { meta, species ->
         tuple(meta, file("${projectDir}/assets/virulencefinder_placeholder.tsv"))
     }
     ch_virulencefinder_all_results = ch_virulencefinder_results
