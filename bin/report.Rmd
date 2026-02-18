@@ -151,7 +151,7 @@ Følgende kvalitetskontrollkriterier gjelder:
 
 \begin{enumerate}[nosep, leftmargin=*, itemsep=0pt, topsep=0pt, partopsep=0pt, parsep=0pt]
   \item \textbf{Dekning:} $\,\geq\,$ \textbf{40x}
-  \item \textbf{Genomlengde:} $\,\geq\,$ \textbf{95\%} og $\,\leq\,$ \textbf{105\%} av minste/største lukk>
+  \item \textbf{Genomlengde:} $\,\geq\,$ \textbf{95\%} og $\,\leq\,$ \textbf{105\%} av minste/største lukkede genom
   \item \textbf{Maks antall kontiger:} \textbf{400}
 \end{enumerate}
 \noindent\rule{\textwidth}{0.5pt}
