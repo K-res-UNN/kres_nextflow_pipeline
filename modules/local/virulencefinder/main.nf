@@ -20,7 +20,7 @@ process VIRULENCEFINDER {
     """
     python -m virulencefinder \\
     --inputfasta $fasta \\
-    --databases virulence_ent,virulence_entfm_entls \\
+    --databases virulence_entfm_entls \\
     --outputPath virulencefinder
 
     # Rename json output file
